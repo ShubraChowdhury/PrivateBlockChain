@@ -61,7 +61,7 @@ class Block {
             }
 			else {
 				// Returning the Block not valid
-				//reject(false);
+				//resolve(false);
 				reject(Error('Block Hash Changed ..Block hacked'));
 			 }
 
@@ -81,22 +81,25 @@ class Block {
      */
     getBData() {
 		//let self = this;
-		let self = this.data;
-		return new Promise((resolve, reject) => {
+		let self = this;
+		return new Promise(async(resolve, reject) => {
 
         // Getting the encoded data saved in the Block
-        let encodedData = self.body;
+        let encodedData = this.body;
+        //console.log(encodedData)
         // Decoding the data to retrieve the JSON representation of the object
         let decodedData = hex2ascii(encodedData);
+        //console.log(decodedData)
         // Parse the data to an object to be retrieve.
 		let parsedData = JSON.parse(decodedData);
         // Resolve with the data if the object isn't the Genesis block
+        //console.log(decodedData)
 
-        if (self.height > 0) {
+        if (this.height > 0) {
 					resolve(parsedData);
 							}
 		else {
-				reject( Error('This is the Genesis Block'));
+				resolve( 'Got Genesis Block');
 			}
 
         });

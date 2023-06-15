@@ -74,31 +74,38 @@ class Blockchain {
     _addBlock(block) {
         let self = this;
         return new Promise(async (resolve, reject) => {
-			// New Block height is previous block height +1
-			block.height = self.height + 1;
-			// get time in human readable format
+		//	 New Block height is previous block height +1
+			block.height = this.chain.length+1;
+		//	 get time in human readable format
 			block.time = new Date().getTime().toString().slice(0,-3);
-			// Check for Genisis block, if it is genisis block then the previous block hash will be null
-			if(self.height == -1)
+		//	 Check for Genisis block, if it is genisis block then the previous block hash will be null
+			if(this.chain.length>0)
 			 {
-					 block.previousBlockHash = null;
+				 block.previousBlockHash = self.chain[self.chain.length - 1].hash;
+
 			  }
             else {
 
-			block.previousBlockHash = self.chain[self.height].hash; // hash of the previous block
+			//block.previousBlockHash = self.chain[block.height - 1].hash;  //hash of the previous block
+			 block.previousBlockHash = null;
 			     }
 
 			// set hash for new block
 			block.hash = SHA256(JSON.stringify(block)).toString();
-			// push the new block  to blockchain
+		//	 push the new block  to blockchain
 			self.chain.push(block);
 
-			// update the height of newly created blockchain
-			this.height += 1;
+		//	 update the height of newly created blockchain
+			self.height += 1;
 			resolve(block);
+			block.height = self.height;
+
+
 
 
         });
+
+
     }
 
     /**
@@ -162,13 +169,14 @@ class Blockchain {
 
 			if (isValid) {
 				/* Create the block and add it to the chain */
-				let newBlock = new BlockClass.Block({address: address, message: message, signature: signature, star: star});
+				//let newBlock = new BlockClass.Block({address: address, message: message, signature: signature, star: star});
+				let newBlock = new BlockClass.Block({star:star, owner:address});
 				let resBlock = await self._addBlock(newBlock);
 				/* 6. Resolve with the block added. */
 				resolve(resBlock);
 					}
 			else {
-				reject (Error('Error Block Cannot be Added'));
+				reject (new Error('Error Block Cannot be Added'));
 					}
 
 	 }
@@ -186,12 +194,12 @@ class Blockchain {
         let self = this;
         return new Promise((resolve, reject) => {
 
-			let block = self.chain.find(p => p.hash == hash);
+			let block = self.chain.filter(p => p.hash == hash);
 			if(block) {
 						   resolve(block);
 					   }
 		   else {
-			   console.log('Block By hash not Found')
+			   //console.log('Block By hash not Found')
 			  resolve(Error('Block By hash not Found'));
 		   }
 
@@ -278,7 +286,14 @@ class Blockchain {
             });
 
 
-
+//self.chain.forEach(async(block) => {
+//                        if(!await block.validate()){
+//                            if(block.previousBlockHash!=block.hash){
+//                            errorLog.push(block);
+//                            }
+//                        }
+//                    });
+//                    resolve(errorLog)
 
 
 
