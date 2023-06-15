@@ -286,14 +286,6 @@ class Blockchain {
             });
 
 
-//self.chain.forEach(async(block) => {
-//                        if(!await block.validate()){
-//                            if(block.previousBlockHash!=block.hash){
-//                            errorLog.push(block);
-//                            }
-//                        }
-//                    });
-//                    resolve(errorLog)
 
 
 
