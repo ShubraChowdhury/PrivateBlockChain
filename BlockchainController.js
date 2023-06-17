@@ -20,13 +20,28 @@ class BlockchainController {
 
      // Enpoint to Get Validate Chain and its error (GET Endpoint)
      // Added this line as per the review reccomendation of first submission
-	    validateChain(){
-	        this.app.get("/validateChain", async (res) => {
-	            const chain = this.blockchain;
-	            let BC_errs = await chain.validateChain();
-	            return res.status.json(BC_errs);
-	        });
+//	    validateChain(){
+//	        this.app.get("/validateChain", async (res) => {
+//	            const chain = this.blockchain;
+//	            let BC_errs = await chain.validateChain();
+//	            return res.status.json(BC_errs);
+//	        });
+//    }
+
+
+//https://knowledge.udacity.com/?page=1&query=localhost%3A8000%2FvalidateChain
+validateChain(){
+        this.app.get("/validateChain",async (req, res) =>{
+			console.log("Inside Validate Chain URL");
+            let chn_errs = await this.blockchain.validateChain();
+            if(chn_errs.length >0){
+                return res.status(404).send("Blockchain Not Valid" + JSON.stringify(chn_errs));
+            } else {
+                return res.status(200).send("Blockchain Is Valid");
+            }
+        });
     }
+
 
 
 
