@@ -95,6 +95,11 @@ class Blockchain {
 		//	 push the new block  to blockchain
 			self.chain.push(block);
 
+		// Review 1 suggsted that I validate the chain to validate all the blocks in chain , if any defective blocks is present then
+		//validateChain() will return those blocks
+			//await this.chain.validateChain();
+			 self.validateChain();
+
 		//	 update the height of newly created blockchain
 			self.height += 1;
 			resolve(block);
@@ -194,7 +199,7 @@ class Blockchain {
         let self = this;
         return new Promise((resolve, reject) => {
 
-			let block = self.chain.filter(p => p.hash == hash);
+			let block = self.chain.find(p => p.hash == hash); // as per review 1 suggestion changed filter to find
 			if(block) {
 						   resolve(block);
 					   }
@@ -270,22 +275,29 @@ class Blockchain {
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
 
-			/* 1. You should validate each block using `validateBlock`  */
-			self.chain.forEach(block => {
-			let ValidBlock = block.validate();
-			if (ValidBlock === false) {
-				errorLog.push(block);
-			}
 
-			/*       * 2. Each Block should check the with the previousBlockHash */
+// As per review 1 suggestion removed the .forEach
+ for (let block of self.chain) {
+	 			/* 1. You should validate each block using `validateBlock`  */
+                if (await block.validate()) {
 
-			if (block.height > 0 && (block.previousBlockHash !== self.chain[block.height - 1].hash)) {
-				errorLog.push(block);
-			}
-			resolve(errorLog);
-            });
+					/* If it is not Genisis block */
+                    if (block.height > 0) {
 
+                        let prevBlock = self.chain.filter(blk => blk.height === block.height - 1)[0];
 
+						/*       * 2. Each Block should check the with the previousBlockHash */
+                        if (block.previousBlockHash !== prevBlock.hash)
+                        {
+                            errorLog.push(new Error(`Previous block hash entry in  #${block.height} does not match with  hash of block #${block.height - 1}.`));
+                        }
+                    }
+                }
+                else {
+                    errorLog.push(new Error(`Invalid block #${block.height}: ${block.hash}`))
+                }
+            }
+            errorLog.length > 0 ? resolve(errorLog) : resolve('No errors detected.');
 
 
 

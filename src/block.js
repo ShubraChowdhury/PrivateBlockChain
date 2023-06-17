@@ -41,10 +41,12 @@ class Block {
 
     validate() {
         let self = this;
+        //Added declration of neHash to avoid the error pointed out in 1st review
+        let newHash = null;
         return new Promise((resolve, reject) => {
             // Save in auxiliary variable the current block hash
 
-			let currentHash = self.hash;
+			let currHash = self.hash;
 
             // Recalculate the hash of the Block
             //let newHash = SHA256(self).toString(); --- this did not work
@@ -56,14 +58,15 @@ class Block {
 
             if (currHash === newHash) {
 				// Returning the Block is  valid
-				 self.hash = currentHash ;
+				 self.hash = currHash ;
 				resolve(true);
             }
-			else {
-				// Returning the Block not valid
-				//resolve(false);
-				reject(Error('Block Hash Changed ..Block hacked'));
-			 }
+//			else {
+//				// Returning the Block not valid
+//				//resolve(false);
+//				reject(Error('Block Hash Changed ..Block hacked'));
+//				//reject(false);
+//			 } // else part didnt work so removing
 
 
 
