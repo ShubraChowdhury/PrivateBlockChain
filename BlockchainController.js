@@ -33,13 +33,11 @@ class BlockchainController {
 //https://knowledge.udacity.com/?page=1&query=localhost%3A8000%2FvalidateChain
 validateChain(){
         this.app.get("/validateChain",async (req, res) =>{
-			console.log("Inside Validate Chain URL  In BC Controller" );
             let chn_errs = await this.blockchain.validateChain();
-            console.log("Length of chn_errs" + chn_errs);
             if(chn_errs.length >0){
                 return res.status(404).send("Blockchain Not Valid" + JSON.stringify(chn_errs));
             } else {
-                return res.status(200).send("Blockchain Is Valid");
+                return res.status(200).send("Blockchain Is Valid and  " + parseInt(this.blockchain.height) + " blocks added  in addition to  genisis block ");
             }
         });
     }
