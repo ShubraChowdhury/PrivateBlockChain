@@ -271,46 +271,27 @@ class Blockchain {
      * 2. Each Block should check the with the previousBlockHash
      */
     validateChain() {
-        let self = this;
-        let errorLog = [];
-        return new Promise(async (resolve, reject) => {
-	console.log("Inside Validate step 1 in blockchain.js" );
+	    let self = this;
+	    let errorLog = [];
+	    return new Promise(async (resolve, reject) => {
+		/* 1. You should validate each block using `validateBlock`  */
+	      self.chain.forEach(async (block) => {
+	        try {
+	          /* 2. Each Block should check the with the previousBlockHash
+	          .validate() in block.js checks currHash to  newHash
+	          */
+	          await block.validate();
+	        }
+	        catch (e) {
+	          errorLog.push(e);
+	        }
+	      });
 
-// As per review 1 suggestion removed the .forEach
- for (let block of self.chain) {
-	 			console.log("Inside Validate step 2 in blockchain.js" );
-	 			/* 1. You should validate each block using `validateBlock`  */
-	 			console.log("Blocjk height blockchain.js  " + block.height );
-                if (await block.validate()) {
-				console.log("Inside Validate step 3 in blockchain.js" );
-					/* If it is not Genisis block */
-                    if (block.height > 0) {
-				console.log("Inside Validate step 4 in blockchain.js" );
+	     // Resolving errorLog
+	        resolve(errorLog);
 
-                        let prevBlock = self.chain.filter(blk => blk.height === block.height - 1)[0];
-
-						/*       * 2. Each Block should check the with the previousBlockHash */
-                        if (block.previousBlockHash !== prevBlock.hash)
-                        {
-							console.log("Inside Validate step 5 in blockchain.js" );
-                            errorLog.push(new Error(`Previous block hash entry in  #${block.height} does not match with  hash of block #${block.height - 1}.`));
-                        }
-                    }
-                }
-                else {
-					console.log("Inside Validate step 6 in blockchain.js" );
-                    errorLog.push(new Error(`Invalid block #${block.height}: ${block.hash}`))
-                }
-            }
-            errorLog.length > 0 ? resolve(errorLog) : resolve('No errors detected.');
-
-
-
-
-        });
-        console.log("Inside Validate step 7 end of validation in blockchain.js" );
-    }
-
+	    });
+	  }
 }
 
 module.exports.Blockchain = Blockchain;

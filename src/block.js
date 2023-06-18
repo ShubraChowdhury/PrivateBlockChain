@@ -45,51 +45,32 @@ class Block {
         let newHash = null;
         return new Promise((resolve, reject) => {
 
-
-			/*
-			[UnhandledPromiseRejection: This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). The promise rejected with the reason "false".] {
-			  code: 'ERR_UNHANDLED_REJECTION'
-				}
-
-				Adding try catch due to the above erroe
-
-			*/
             // Save in auxiliary variable the current block hash
-          try {
-            console.log("Inside validate() in block.js");
 
 			let currHash = self.hash;
 
-			console.log("Current hash  block.js  " + currHash);
 
             // Recalculate the hash of the Block
-            //let newHash = SHA256(self).toString(); --- this did not work
+
             self.hash = null; // current hash after storing it in new variable is set to null as it caused problem in later steps when rehashed .... investigave more
 			newHash = SHA256(JSON.stringify(self)).toString();
-
-			console.log("New  hash  block.js  " + newHash);
-
+			self.hash = currHash ;
 
             // Comparing if the hashes changed
 
-            if (currHash === newHash) {
-				console.log("Comparing curr and new hash New  hash  block.js  " );
-				// Returning the Block is  valid
-				 self.hash = currHash ;
+            if (currHash !== newHash) {
+				// Returning the Block not  valid
+				resolve(false);
+
+            }
+
+			else {
+				// Returning the Block is valid
+				console.log(" Block " + (self.height -1) +" Resolved ",'\n');
+				console.log("Curr hash === "+ currHash + '\n' +"New hash ===  " + newHash);
+				console.log('\n');
 				resolve(true);
-				console.log("Block Resolved  block.js  " );
-            }
-            } catch (error) {
-			                reject(new Error(error))
-            }
-//			else {
-//				// Returning the Block not valid
-//
-//				console.log("NOT EQUAL curr and new hash New  hash  block.js  " );
-//				reject(Error('Block Hash Changed ..Block hacked'));
-//				//resolve(false);
-//				//reject(false);
-//			 } // else part didnt work so removing
+			 }
 
 
 
